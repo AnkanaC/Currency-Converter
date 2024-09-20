@@ -4,6 +4,7 @@ class CurrencyConverterMaterialPage extends StatefulWidget {
   const CurrencyConverterMaterialPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CurrencyConverterMaterialPageState createState() =>
       _CurrencyConverterMaterialPageState();
 }
@@ -12,17 +13,10 @@ class _CurrencyConverterMaterialPageState
     extends State<CurrencyConverterMaterialPage> {
   final TextEditingController textEditingController = TextEditingController();
   double result = 0;
+  String errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
-    final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(5),
-      borderSide: const BorderSide(
-        width: 2.0,
-        style: BorderStyle.solid,
-        color: Colors.black,
-      ),
-    );
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
@@ -44,7 +38,7 @@ class _CurrencyConverterMaterialPageState
               ),
             ),
             Text(
-              "INR $result",
+              "INR ${result != 0 ? result.toStringAsFixed(2) : result.toStringAsFixed(0)}",
               textDirection: TextDirection.ltr,
               style: const TextStyle(
                 fontSize: 45,
@@ -73,6 +67,7 @@ class _CurrencyConverterMaterialPageState
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(60),
                   ),
+                  errorText: errorMessage.isEmpty ? null : errorMessage,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                     signed: false, decimal: true),
@@ -83,7 +78,13 @@ class _CurrencyConverterMaterialPageState
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    result = double.parse(textEditingController.text) * 81;
+                    try {
+                      result = double.parse(textEditingController.text) * 81;
+                      errorMessage = '';
+                    } catch (e) {
+                      errorMessage = 'Please enter a valid number';
+                      result = 0;
+                    }
                   });
                 },
                 style: TextButton.styleFrom(
